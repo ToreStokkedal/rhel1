@@ -1,0 +1,43 @@
+*** Kafka installed with home brew
+
+*** Staring kafka
+zookeeper-server-start /usr/local/etc/kafka/zookeeper.properties & kafka-server-start /usr/local/etc/kafka/server.properties
+
+*** Kafka dirs
+/usr/local/etc/kafka 
+
+*** Create first topic
+kafka-topics --zookeeper 127.0.0.1:2181 --topic tweets-topic --create --partitions 6 --replication-factor 1
+
+kafka-topics --zookeeper 127.0.0.1:2181 --list
+
+*** Describe
+kafka-topics --zookeeper 127.0.0.1:2181 --topic first_topic --describe
+
+*** Delete
+kafka-topics --zookeeper 127.0.0.1:2181 --topic first-topic --delete
+
+*** Producer
+kafka-console-producer --broker-list 127.0.0.1:9092 --topic first_topic --producer-property acks=all
+
+*** Consumer  
+kafka-console-consumer --bootstrap-server 127.0.0.1:9092 --topic first_topic 
+kafka-console-consumer --bootstrap-server 127.0.0.1:9092 --topic first_topic --from-beginning
+kafka-consumer-groups  --bootstrap-server 127.0.0.1:9092 --list
+
+*** Consumer groups
+kafka-console-consumer --bootstrap-server 127.0.0.1:9092 --topic first_topic -group my-first-application
+from-beginning on groups means from the ones not read yet
+
+*** Offsets and reset
+kafka-consumer-groups --bootstrap-server localhost:9092 --group my-first-applicaiton --reset-offsets --to-earliest --topic first_topic --execute 
+
+*** Settings for safe producer. Kafka >= 1.0
+enable.idempotence=true (producer level) + min.insync.replicas = 2 (broker / topic level)
+	Implies acks=all, retries=maxint, max.inflight.per.connections=5
+While keeping ordering and reasonable performance
+
+Before 1.0
+acks=all On producer level. Ensures that dat is distributed to replicas before ack is received. (Tanke, holder det ikke med 2?)
+min.insync.replicas=2 broker/topic level Enshures two brokers in ISR at least have the data after an ack
+max.inflight.retries.

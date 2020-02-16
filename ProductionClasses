@@ -1,0 +1,12 @@
+*** To get messages from Twitter and put to Kafka
+TwitterProducer.java
+
+*** Read from Kafka, put to Mongo
+TweetsFromKafkaToMongo - the overall driver with main
+
+KafkaConsumerRunnable
+Implements runnable, connect to kafka, loop for tweets from kafka,
+use TweetsToMongo to write to Mongodb
+
+TweetsToMongo 
+Connect to mongo, get teweets and write to Mongo
